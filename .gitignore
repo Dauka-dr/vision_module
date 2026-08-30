@@ -1,0 +1,33 @@
+__pycache__/
+*.pyc
+*.egg-info/
+
+# --- модели -----------------------------------------------------------------
+# Веса RTMDet и RTMPose скачиваются сами при первом запуске (pipeline.py).
+models/*.pth
+# Кроме обученной нами: её взять больше негде, и без неё не будет действий.
+!models/stgcnpp_target7.pth
+
+# --- данные -----------------------------------------------------------------
+# Тестовая сцена (13 МБ) тянется скриптом fetch_assets.py.
+test_scenes/*.jpg
+test_scenes/*.png
+# Выборка NTU (143 МБ) пересобирается: python build_subset.py
+dataset/annotations/*.pkl
+# Своя съёмка и извлечённые из неё скелеты
+dataset/raw/**/*
+dataset/skeletons/**/*
+!dataset/**/.gitkeep
+
+# --- рабочее ----------------------------------------------------------------
+work_dirs/
+data/
+# Аннотированные картинки и текстовые отчёты замеров — пересоздаются
+# командой python metrics/run_all.py
+bench_out/
+metrics/results/
+demo_out.jpg
+*.mp4
+
+# Клон OpenMMLab, ставится install.ps1
+mmaction2/
