@@ -41,6 +41,35 @@ IN_REPO = {
         'backbone для дообучения на своих классах (обучен нами)',
 }
 
+# Alternative model sizes. The pipeline fetches these itself the moment someone
+# selects one (`--detector rtmdet-t`), so they are not needed to run. The metrics
+# scripts, however, address the files directly and fail if they are absent, so
+# --all exists to reproduce the full benchmark set.
+ALTERNATIVES = {
+    'rtmdet-t': (
+        'models/rtmdet_tiny_8xb32-300e_coco_20220902_112414-78e30dcc.pth',
+        'https://download.openmmlab.com/mmdetection/v3.0/rtmdet/'
+        'rtmdet_tiny_8xb32-300e_coco/'
+        'rtmdet_tiny_8xb32-300e_coco_20220902_112414-78e30dcc.pth',
+        '55 МБ', 'самый быстрый детектор'),
+    'rtmdet-m': (
+        'models/rtmdet_m_8xb32-300e_coco_20220719_112220-229f527c.pth',
+        'https://download.openmmlab.com/mmdetection/v3.0/rtmdet/'
+        'rtmdet_m_8xb32-300e_coco/'
+        'rtmdet_m_8xb32-300e_coco_20220719_112220-229f527c.pth',
+        '214 МБ', 'детектор побольше'),
+    'rtmpose-t': (
+        'models/rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.pth',
+        'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/'
+        'rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.pth',
+        '13 МБ', 'самая быстрая поза'),
+    'rtmpose-s': (
+        'models/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.pth',
+        'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/'
+        'rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.pth',
+        '22 МБ', 'поза поменьше'),
+}
+
 # Needed only to retrain, and rebuilt locally rather than downloaded.
 OPTIONAL = {
     'dataset/annotations/target_7cls.pkl':
@@ -58,6 +87,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--check', action='store_true',
                     help='только проверить, ничего не качать')
+    ap.add_argument('--all', action='store_true',
+                    help='вместе с запасными размерами моделей (для метрик)')
     args = ap.parse_args()
 
     os.chdir(PROJECT_DIR)
@@ -79,6 +110,15 @@ def main():
         if not ok:
             missing.append((name, path, url, size))
 
+    hint = ('скачиваются' if args.all
+            else 'по --all; иначе подтянутся сами при выборе')
+    print(f"\nзапасные размеры моделей ({hint}):")
+    for name, (path, url, size, what) in ALTERNATIVES.items():
+        ok = os.path.exists(path)
+        print(f"  [{'x' if ok else ' '}] {name:<11}{size:>8}   {what}")
+        if not ok and args.all:
+            missing.append((name, path, url, size))
+
     print("\nтолько для переобучения:")
     for path, what in OPTIONAL.items():
         ok = os.path.exists(path)
@@ -92,7 +132,8 @@ def main():
     if args.check:
         total = ', '.join(f'{n} ({s})' for n, _, _, s in missing)
         print(f"\nне хватает: {total}")
-        print("скачать: python fetch_assets.py")
+        print("скачать: python fetch_assets.py"
+              + ("" if args.all else "   (или --all вместе с запасными)"))
         return
 
     print(f"\nскачиваю {len(missing)} файл(ов)...")

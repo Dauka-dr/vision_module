@@ -25,6 +25,14 @@ python demo.py             # веб-камера
 
 Проверить, всё ли на месте: `python fetch_assets.py --check`
 
+Что откуда берётся:
+
+| | размер | источник |
+|---|---|---|
+| `stgcnpp_target7`, `stgcnpp_ntu60` | 32 МБ | **в репозитории** — обучены нами, скачать негде |
+| `rtmdet-s`, `rtmpose-m` | 139 МБ | `fetch_assets.py`, серверы OpenMMLab |
+| `rtmdet-t/m`, `rtmpose-t/s` | 304 МБ | подтянутся сами при выборе (`--detector rtmdet-t`); для полного набора метрик — `fetch_assets.py --all` |
+
 ```powershell
 python demo.py --source video.mp4 --save out.mp4
 python demo.py --source photo.jpg
