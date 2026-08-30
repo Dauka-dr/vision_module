@@ -35,16 +35,16 @@ ASSETS = {
 
 # Present in the repository itself — checked, never downloaded.
 IN_REPO = {
-    'models/stgcnpp_target7.pth': 'классификатор действий (обучен нами)',
+    'models/stgcnpp_target7.pth':
+        'классификатор действий, 7 классов (обучен нами)',
+    'models/stgcnpp_ntu60_epoch12.pth':
+        'backbone для дообучения на своих классах (обучен нами)',
 }
 
 # Needed only to retrain, and rebuilt locally rather than downloaded.
 OPTIONAL = {
     'dataset/annotations/target_7cls.pkl':
         'выборка NTU для переобучения — собрать: python build_subset.py',
-    'models/stgcnpp_ntu60_epoch12.pth':
-        'backbone для дообучения — получить: '
-        'python mmaction2/tools/train.py configs/stgcnpp_ntu60_1gpu.py',
 }
 
 

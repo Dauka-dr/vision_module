@@ -125,7 +125,7 @@ rec = Recognizer(identity_provider=FaceCropAdapter(my_model))
 | `identity.py` | адаптеры к внешней системе идентификации |
 | `fetch_assets.py` | догрузка весов и тестовой сцены |
 | `build_subset.py` | сборка обучающей выборки из NTU120 |
-| `metrics/` | 19 замеров: скрипты, результаты, выводы |
+| `metrics/` | 20 замеров: скрипты, результаты, выводы |
 | `configs/` | конфиги обучения |
 
 ## Переобучение
@@ -133,8 +133,11 @@ rec = Recognizer(identity_provider=FaceCropAdapter(my_model))
 ```powershell
 # 1. Скачать NTU120 (1.15 ГБ), ссылка в metrics/README.md, положить в data/skeleton/
 python build_subset.py                                     # выборка под классы
-python mmaction2/tools/train.py configs/stgcnpp_ntu60_1gpu.py   # backbone, ~3 ч
 python mmaction2/tools/train.py configs/stgcnpp_target7.py      # дообучение, ~50 мин
+
+# backbone уже лежит в models/ — переобучать его с нуля (~3 ч) нужно только
+# при смене архитектуры:
+# python mmaction2/tools/train.py configs/stgcnpp_ntu60_1gpu.py
 python watch_training.py --work-dir work_dirs/stgcnpp_target7 --iters-per-epoch 2950 --epochs 10
 python metrics/run_all.py                                  # все метрики
 ```
